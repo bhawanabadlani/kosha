@@ -17,30 +17,31 @@ class MeetingInline(admin.StackedInline):
 
 
 @admin.register(Person)
-class PersonAdmin(DjangoQLSearchMixin, VersionAdmin):
+class PersonAdmin(VersionAdmin):
     list_display = (
         "name",
         "reference_number",
-        "nationality",
         "mobile",
         "email",
+        "nationality",
+        "zone",
         "care_level",
         "relation_with_gm",
-        "zone",
-        "temple",
         "marital_status",
+        "temple",
     )
+    list_select_related = ("nationality", "zone", "temple", "country")
     list_filter = (
-        ("care_level", DropdownFilter),
-        ("relation_with_gm", DropdownFilter),
-        ("nationality", RelatedDropdownFilter),
-        ("country", RelatedDropdownFilter),
-        ("zone", RelatedDropdownFilter),
-        ("temple", RelatedDropdownFilter),
+        "zone",  # RelatedDropdownFilter),
+        "nationality",  # RelatedDropdownFilter),
+        "country",  # RelatedDropdownFilter),
+        "care_level",  # , DropdownFilter),
+        "relation_with_gm",  # , DropdownFilter),
+        "temple",  # RelatedDropdownFilter),
     )
     search_fields = ("reference_number", "name", "mobile", "email")
     readonly_fields = (
-        "reference_number",
+        # "reference_number",
         "approved_by",
         "approved_at",
         "created_at",
@@ -58,6 +59,10 @@ class PersonAdmin(DjangoQLSearchMixin, VersionAdmin):
                     ("dob", "dob_type"),
                     ("dod", "life_status"),
                     ("nationality", "occupation"),
+                    ("country",),
+                    ("zone"),
+                    ("marital_status"),
+                    ("care_level", "relation_with_gm"),
                 )
             },
         ),
@@ -68,7 +73,6 @@ class PersonAdmin(DjangoQLSearchMixin, VersionAdmin):
                     ("mobile", "phone", "email"),
                     ("address_line_1", "address_line_2", "locality"),
                     ("zipcode", "state"),
-                    ("country"),
                     ("permanent_address_same_as_current",),
                     (
                         "permanent_address_line_1",
@@ -77,19 +81,14 @@ class PersonAdmin(DjangoQLSearchMixin, VersionAdmin):
                     ),
                     ("permanent_zipcode", "permanent_state"),
                     ("permanent_country"),
-                    ("zone"),
                 )
             },
         ),
-        (
-            "Family details",
-            {"fields": (("marital_status",), ("spouse",), ("children_names",))},
-        ),
+        ("Family details", {"fields": (("spouse",), ("children_names",))}),
         (
             "Spiritual details",
             {
                 "fields": (
-                    ("care_level", "relation_with_gm"),
                     ("shelter_guru",),
                     ("shelter_date", "shelter_recommendation"),
                     ("shelter_place",),
