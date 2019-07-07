@@ -17,7 +17,7 @@ class MeetingInline(admin.StackedInline):
 
 
 @admin.register(Person)
-class PersonAdmin(VersionAdmin):
+class PersonAdmin(DjangoQLSearchMixin, VersionAdmin):
     list_display = (
         "name",
         "reference_number",
